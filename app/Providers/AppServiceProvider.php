@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\UserExercise;
+use App\Models\Workout;
+use App\Policies\UserExercisePolicy;
+use App\Policies\WorkoutPolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::policy(Workout::class, WorkoutPolicy::class);
+        Gate::policy(UserExercise::class, UserExercisePolicy::class);
     }
 }

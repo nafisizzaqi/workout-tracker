@@ -7,6 +7,7 @@ use App\Models\Workout;
 use Illuminate\Validation\Rule;
 use App\Models\UserExercise;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 class WorkoutController extends Controller
 {
     /**
@@ -14,7 +15,14 @@ class WorkoutController extends Controller
      */
     public function index(Request $request)
     {
-        $workouts = Workout::where('user_id', $request->user()->id)->with('user_exercises')->get();
+        $workouts = Workout::query()
+            ->where('user_id', $request->user()->id)
+            ->activeOrPending()
+            ->with('user_exercises')
+            ->orderBy('schedule')
+            ->orderBy('id')
+            ->get();
+
         return response()->json(['workouts' => $workouts], 200);
     }
 
@@ -33,6 +41,7 @@ class WorkoutController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'schedule' => 'required|date_format:Y-m-d H:i:s',            
             'user_exercises' => 'required|array',
             'user_exercises.*.exercise_id' => 'required|integer|exists:exercises,id|distinct',
             'user_exercises.*.description' => 'required|string|max:255',
@@ -43,16 +52,18 @@ class WorkoutController extends Controller
         ]);
 
         $workout = $validated;
-        unset($workout['user_exercises']);
+        unset($workout['user_exercises'], $workout['schedule']);
         $workout['user_id'] = $request->user()->id;
         $workout = Workout::create($workout);
+        $workout->update(['schedule' => $validated['schedule']]);
         $now = now();
         $user_exercises_data = [];
-        for($i = 0; $i < count($request->user_exercises); $i++){
-            $user_exercises_data[] = $request->user_exercises[$i];
-            $user_exercises_data[$i]['workout_id'] = $workout->id;
-            $user_exercises_data[$i]['created_at'] = $now;
-            $user_exercises_data[$i]['updated_at'] = $now;
+        foreach ($request->user_exercises as $userExercise) {
+            $user_exercises_data[] = array_merge($userExercise, [
+                'workout_id' => $workout->id,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
         }
         $user_exercises = UserExercise::insert($user_exercises_data);
         if (!$user_exercises) {
@@ -66,6 +77,9 @@ class WorkoutController extends Controller
      */
     public function show(Workout $workout)
     {
+        if (Gate::denies('show', $workout)) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         $data = $workout->load('user_exercises');
         return response()->json(['workout' => $data], 200);
     }
@@ -83,10 +97,14 @@ class WorkoutController extends Controller
      */
     public function update(Request $request, Workout $workout)
     {
+        if (Gate::denies('update', $workout)) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'status' => [Rule::in(['done', 'pending', 'missed']), 'nullable'],
             'schedule' => 'required|date_format:Y-m-d H:i:s',
+            'comment' => 'nullable|string|max:255',
             'user_exercises' => 'required|array',
             'user_exercises.*.id' => 'required|integer|exists:user_exercises,id',
             'user_exercises.*.exercise_id' => 'required|integer|exists:exercises,id|distinct',
@@ -124,10 +142,13 @@ class WorkoutController extends Controller
      */
     public function destroy(Workout $workout)
     {
-        $deleted = $workout->delete();
-        if (!$deleted) {
-            return response()->json(['message' => 'Failed to delete workout'], 500);
+        if (Gate::denies('delete', $workout)) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
-        return response()->json(['message' => 'Workout deleted successfully', 'workout' => $workout], 200);
+        DB::transaction(function () use ($workout){
+            $workout->user_exercises()->delete();
+            $workout->delete();
+        });
+        return response()->json(['message' => 'Workout deleted successfully'], 200);
     }
 }

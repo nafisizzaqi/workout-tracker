@@ -14,15 +14,16 @@ return new class extends Migration
         Schema::create('exercises', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->set('category', [
-                'Upper Body',
-                'Lower Body',
-                'Core',
-                'Bodyweight',
-                'Strength',
-                'Isolation',
-                'Cardio',
-                'Full Body'
+            $table->text('description')->nullable();
+            $table->json('category')->array([
+                'Upper Body' => 'string',
+                'Lower Body' => 'string',
+                'Core' => 'string',
+                'Bodyweight' => 'string',
+                'Strength' => 'string',
+                'Isolation' => 'string',
+                'Cardio' => 'string',
+                'Full Body' => 'string',
             ]);
             $table->timestamps();
         });
