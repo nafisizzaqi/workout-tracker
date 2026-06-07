@@ -80,7 +80,7 @@ class WorkoutController extends Controller
         if (Gate::denies('show', $workout)) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-        $data = $workout->load('user_exercises');
+        $data = $workout->with('user_exercises')->first();
         return response()->json(['workout' => $data], 200);
     }
 

@@ -9,7 +9,7 @@ class ExerciseController extends Controller
 {
     public function index()
     {
-        $exercises = Exercise::all();
+        $exercises = Exercise::with('categories')->get();
         return response()->json(['exercises' => $exercises], 200);
     }
 }
