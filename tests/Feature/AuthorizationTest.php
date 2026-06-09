@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use App\Models\Exercise;
 use App\Models\User;
 use App\Models\UserExercise;
@@ -77,8 +78,10 @@ class AuthorizationTest extends TestCase
         $intruder = User::factory()->create();
         $exercise = Exercise::create([
             'name' => 'Push-ups',
-            'category' => json_encode(['Upper Body', 'Bodyweight']),
+            'description' => 'A basic bodyweight exercise that targets the chest, shoulders, and triceps.'
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
         $workout = Workout::create([
             'name' => 'Workout 1',
             'user_id' => $owner->id,
@@ -108,8 +111,10 @@ class AuthorizationTest extends TestCase
         $intruder = User::factory()->create();
         $exercise = Exercise::create([
             'name' => 'Push-ups',
-            'category' => json_encode(['Upper Body', 'Bodyweight']),
+            'description' => 'A basic bodyweight exercise that targets the chest, shoulders, and triceps.'
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
         $workout = Workout::create([
             'name' => 'Workout 1',
             'user_id' => $owner->id,
@@ -138,8 +143,10 @@ class AuthorizationTest extends TestCase
         $intruder = User::factory()->create();
         $exercise = Exercise::create([
             'name' => 'Push-ups',
-            'category' => json_encode(['Upper Body', 'Bodyweight']),
+            'description' => 'A basic bodyweight exercise that targets the chest, shoulders, and triceps.'
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
         $workout = Workout::create([
             'name' => 'Workout 1',
             'user_id' => $owner->id,

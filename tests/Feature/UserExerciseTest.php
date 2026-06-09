@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Workout;
 use App\Models\Exercise;
 use App\Models\UserExercise;
+use App\Models\Category;
 
 class UserExerciseTest extends TestCase
 {
@@ -30,10 +31,11 @@ class UserExerciseTest extends TestCase
         $exercise = Exercise::create([
             'name' => 'Push-ups',
             'description' => 'Test',
-            'category' => 'Upper Body,Bodyweight',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
             ->postJson('/api/user-exercise', [
                 'workout_id' => $workout->id,
@@ -60,10 +62,11 @@ class UserExerciseTest extends TestCase
         $exercise = Exercise::create([
             'name' => 'Push-ups',
             'description' => 'Test',
-            'category' => 'Upper Body,Bodyweight',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
         $userExercise = UserExercise::create([
             'workout_id' => $workout->id,
             'exercise_id' => $exercise->id,
@@ -91,10 +94,11 @@ class UserExerciseTest extends TestCase
         $exercise = Exercise::create([
             'name' => 'Push-ups',
             'description' => 'Test',
-            'category' => 'Upper Body,Bodyweight',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
         $userExercise = UserExercise::create([
             'workout_id' => $workout->id,
             'exercise_id' => $exercise->id,
@@ -127,10 +131,11 @@ class UserExerciseTest extends TestCase
         $exercise = Exercise::create([
             'name' => 'Push-ups',
             'description' => 'Test',
-            'category' => 'Upper Body,Bodyweight',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
         $userExercise = UserExercise::create([
             'workout_id' => $workout->id,
             'exercise_id' => $exercise->id,

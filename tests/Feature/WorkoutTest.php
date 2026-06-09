@@ -44,7 +44,17 @@ class WorkoutTest extends TestCase
         $exerciseId = DB::table('exercises')->insertGetId([
             'name' => 'Push-ups',
             'description' => 'Test exercise',
-            'category' => json_encode(['Upper Body', 'Bodyweight']),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $categoryId = DB::table('categories')->insert([
+            'name' => 'Upper Body, Bory Weight',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('exercise_categories')->insert([
+            'exercise_id' => $exerciseId,
+            'category_id' => $categoryId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -133,7 +143,17 @@ class WorkoutTest extends TestCase
         $exerciseId = DB::table('exercises')->insertGetId([
             'name' => 'Push-ups',
             'description' => 'Test exercise',
-            'category' => json_encode(['Upper Body', 'Bodyweight']),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $categoryId = DB::table('categories')->insert([
+            'name' => 'Upper Body, Bory Weight',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('exercise_categories')->insert([
+            'exercise_id' => $exerciseId,
+            'category_id' => $categoryId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -180,7 +200,17 @@ class WorkoutTest extends TestCase
         $exerciseId = DB::table('exercises')->insertGetId([
             'name' => 'Push-ups',
             'description' => 'Test exercise',
-            'category' => json_encode(['Upper Body', 'Bodyweight']),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $categoryId = DB::table('categories')->insert([
+            'name' => 'Upper Body, Bory Weight',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('exercise_categories')->insert([
+            'exercise_id' => $exerciseId,
+            'category_id' => $categoryId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

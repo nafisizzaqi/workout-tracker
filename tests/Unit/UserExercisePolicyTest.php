@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Workout;
 use App\Models\Exercise;
 use App\Models\UserExercise;
+use App\Models\Category;
 
 class UserExercisePolicyTest extends TestCase
 {
@@ -21,10 +22,11 @@ class UserExercisePolicyTest extends TestCase
         $exercise = Exercise::create([
             'name' => 'Push-ups',
             'description' => 'Test',
-            'category' => 'Upper Body,Bodyweight',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
         $workout = Workout::create([
             'name' => 'Workout 1',
             'user_id' => $user->id,
@@ -56,10 +58,11 @@ class UserExercisePolicyTest extends TestCase
         $exercise = Exercise::create([
             'name' => 'Push-ups',
             'description' => 'Test',
-            'category' => 'Upper Body,Bodyweight',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
         $userExercise = UserExercise::create([
             'workout_id' => $workout->id,
             'exercise_id' => $exercise->id,
@@ -83,10 +86,11 @@ class UserExercisePolicyTest extends TestCase
         $exercise = Exercise::create([
             'name' => 'Push-ups',
             'description' => 'Test',
-            'category' => 'Upper Body,Bodyweight',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
         $userExercise = UserExercise::create([
             'workout_id' => $workout->id,
             'exercise_id' => $exercise->id,

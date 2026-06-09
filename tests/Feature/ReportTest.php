@@ -6,6 +6,7 @@ use App\Models\Exercise;
 use App\Models\User;
 use App\Models\UserExercise;
 use App\Models\Workout;
+use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -21,8 +22,10 @@ class ReportTest extends TestCase
 
         $exercise = Exercise::create([
             'name' => 'Push-ups',
-            'category' => json_encode(['Upper Body', 'Bodyweight']),
+            'description' => 'A basic bodyweight exercise that targets the chest, shoulders, and triceps.'
         ]);
+        $category = Category::create(['name' => 'Upper Body, Body Weight']);
+        $exercise->categories()->attach($category->id);
 
         $workout = Workout::create([
             'name' => 'Workout 1',

@@ -18,17 +18,37 @@ class ExerciseTest extends TestCase
     {
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
-        DB::table('exercises')->insert([
+        $exerciseId = DB::table('exercises')->insert([
             'name' => 'Push-ups',
             'description' => 'Test',
-            'category' => 'Upper Body,Bodyweight',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $categoryId = DB::table('categories')->insert([
+            'name' => 'Upper Body, Bory Weight',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('exercise_categories')->insert([
+            'exercise_id' => $exerciseId,
+            'category_id' => $categoryId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
         $response = $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/exercise-list');
         $response->assertOk()
-            ->assertJsonStructure(['exercises' => ['*' => ['id', 'name', 'category']]]);
+        ->assertJsonStructure([
+            'exercises' => [
+                '*' => [
+                    'id',
+                    'name',
+                    'categories' => [
+                        '*' => ['id', 'name'],
+                    ],
+                ],
+            ],
+        ]);
         $this->assertCount(1, $response->json('exercises'));
     }
 }
