@@ -20,6 +20,8 @@ Route::controller(AuthController::class)->group(function() {
 });
 
 Route::get('exercise-list', [ExerciseController::class, 'index'])->middleware('auth:api');
+Route::put('workout/{workout}/complete', [WorkoutController::class, 'complete'])->middleware('auth:api');
+Route::post('workout/{workout}/repeat', [WorkoutController::class, 'repeat'])->middleware('auth:api');
 Route::apiResource('workout', WorkoutController::class)->middleware('auth:api');
 Route::apiResource('user-exercise', UserExerciseController::class)->except(['index'])->middleware('auth:api');
 Route::get('report', [ReportController::class, 'index'])->middleware('auth:api');

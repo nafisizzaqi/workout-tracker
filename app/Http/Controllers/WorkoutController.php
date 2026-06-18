@@ -151,4 +151,19 @@ class WorkoutController extends Controller
         });
         return response()->json(['message' => 'Workout deleted successfully'], 200);
     }
+
+    public function complete(Workout $workout)
+    {
+        $workout->update(['status' => 'done']);
+        return response()->json(['message' => 'Workout updated succcessfull', 'workout' => $workout], 200);
+    }
+
+    public function repeat(Workout $workout)
+    {
+        $newWorkout = $workout->replicate();
+        $newWorkout->comment = null;
+        $newWorkout->status = 'pending';
+        $newWorkout->save();
+        return response()->json(['message' => 'Workout updated succcessfull', 'workout' => $newWorkout], 200);
+    }
 }
